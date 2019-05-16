@@ -12,14 +12,15 @@ module Cell
       end
 
       def action_controller_test_request(controller_class)
-        if ::Rails::VERSION::MAJOR >= 5
-          if ::Rails::VERSION::MINOR >= 1 # ~> 5.1
-            ::ActionController::TestRequest.create(controller_class)
-          else # 5.0
-            ::ActionController::TestRequest.create
+        klass = ::ActionController::TestRequest
+        if klass.respond_to?(:create)
+          if klass.method(:create).arity > 0
+            klass.create(controller_class)
+          else
+            klass.create
           end
-        else #< 5
-          ::ActionController::TestRequest.new
+        else
+          klass.new
         end
       end
     end # Testing
